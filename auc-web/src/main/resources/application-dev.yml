@@ -1,0 +1,67 @@
+spring:
+  redis:
+    #host:
+    #port:
+    password:
+    lettuce:
+      pool:
+        max-active: 250         # 连接池最大连接数（使用负值表示没有限制） 默认 8
+        max-wait: 6000        # 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1ms
+        max-idle: 250           # 连接池中的最大空闲连接 默认 8
+        min-idle: 150           # 连接池中的最小空闲连接 默认 0
+    sentinel:
+      master: ems300
+      nodes: 10.112.68.116:26379,10.112.68.117:26379,10.112.68.118:26379
+    database: 7
+
+server:
+  port: 8088
+
+domain:
+  gomedq:
+    address: 10.69.100.140
+    suffix: gome2016.org
+    dqaddomain: http://10.128.16.50/HOWebApp/AppSyncServicePS/AppService.asmx
+    timeout:
+      read: 4000
+      connect: 3000
+  gomehlw:
+    address: 10.144.4.81
+    suffix: gis.gome.inc
+    hlwaddomain: http://10.128.16.50/HOWebApp/AppSyncServicePS/AppService.asmx
+    timeout:
+      read: 4000
+      connect: 3000
+  gomekg:
+    address: 10.129.0.6
+    suffix: gomeholdings.grp
+    timeout:
+      read: 4000
+      connect: 3000
+  isExpired:
+    url: http://10.128.16.50:8012/ADService.asmx
+dubbo:
+  application:
+    name: auc-consumer # 消息者名字
+  registry:
+    #address: zookeeper://10.115.88.106:2181?backup=10.115.88.113:2181,10.115.88.125:2181 # 注册中心地址
+    address: zookeeper://10.112.68.79:2181?backup=10.112.68.102:2181,10.112.68.116:2181  #300的zk
+
+swagger:
+  host: localhost:8080
+  enabled: true
+
+sys:
+  log2his:
+   day: 3
+
+gfs:
+  image:
+    url: http://gfs.ds.gfsuat.com.cn/api/uploadImage
+    token: d350c4b43ec44fcdaf33a24e5128609b
+  file:
+    url: http://gfs.ds.gfsuat.com.cn/api/uploadCommonFile
+    token: d94fa4cf5efc4d37bf00b1fa18c2a019
+  # 上传文件大小限制，单位M， 默认是20M
+  upload:
+    max-size: 20

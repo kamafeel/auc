@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auc.mapper.RoleMapper">
+
+  <!-- 通用查询映射结果 -->
+  <resultMap id="BaseResultMap" type="com.auc.dao.Role">
+    <id column="id" property="id"/>
+    <result column="role_name" property="roleName"/>
+    <result column="role_code" property="roleCode"/>
+  </resultMap>
+
+  <!-- 获取用户角色信息 -->
+  <select id="getRoleInfoByUserId" parameterType="java.lang.Integer"
+    resultMap="BaseResultMap">
+		SELECT
+      r.*
+    FROM
+      `auc_re_user_roles_relation` u
+      LEFT JOIN `auc_re_role` r
+        ON u.role_id = r.id
+    <if test="userId != null and userId !=''" >
+      WHERE u.user_id = #{userId}
+    </if>
+	</select>
+
+  <select id="getAllRoleInfo" resultType="java.util.HashMap">
+    SELECT
+    r.*,u.`user_id`
+    FROM
+    `auc_re_user_roles_relation` u
+    LEFT JOIN `auc_re_role` r
+    ON u.role_id = r.id
+  </select>
+
+</mapper>

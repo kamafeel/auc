@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auc.mapper.OperationalMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.auc.dao.Operational">
+        <id column="id" property="id" />
+        <result column="parent_id" property="parentId" />
+        <result column="oper_name" property="operName" />
+        <result column="oper_code" property="operCode" />
+        <result column="stop_url_prefix" property="stopUrlPrefix" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <select id="selectByRoleCode" resultType="java.lang.String">
+        SELECT
+            o.oper_code
+        FROM
+            auc_re_operational o
+            LEFT JOIN auc_re_privilege_oper po ON po.operational_id = o.id
+            LEFT JOIN auc_re_role_privilege rp ON rp.privilege_id = po.privilege_id
+            LEFT JOIN auc_re_role r ON rp.role_id = r.id
+        WHERE
+            r.role_code = #{roleCode};
+    </select>
+
+    <insert id="savePrivilegeOperationalRelation">
+        INSERT INTO auc_re_privilege_oper
+            (privilege_id, operational_id)
+        VALUES
+        <foreach collection="operationalIds" item="operationalId" index="index" separator=",">
+            (#{privilegeId}, #{operationalId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteRelationByPrivilegeId">
+        DELETE FROM auc_re_privilege_oper WHERE privilege_id = #{privilegeId}
+    </delete>
+
+</mapper>

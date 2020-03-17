@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auc.dubbo.user.mapper.BaseUserMapper">
+
+  <!-- 通用查询映射结果 -->
+  <resultMap id="BaseResultMap" type="com.auc.dubbo.user.dao.BaseUser">
+    <id column="ID" property="id"/>
+    <result column="activitiSync" property="activitiSync"/>
+    <result column="browser" property="browser"/>
+    <result column="password" property="password"/>
+    <result column="realName" property="realName"/>
+    <result column="sourceId" property="sourceId"/>
+    <result column="sourceCode" property="sourceCode"/>
+    <result column="signature" property="signature"/>
+    <result column="status" property="status"/>
+    <result column="userkey" property="userkey"/>
+    <result column="userName" property="userName"/>
+    <result column="departid" property="departid"/>
+    <result column="delete_flag" property="deleteFlag"/>
+    <result column="PersonnelCode" property="PersonnelCode"/>
+    <result column="Supervisor" property="Supervisor"/>
+    <result column="CreateTime" property="CreateTime"/>
+    <result column="Updatetime" property="Updatetime"/>
+    <result column="salt" property="salt"/>
+    <result column="zipcode" property="zipcode"/>
+    <result column="inDate" property="inDate"/>
+    <result column="mailingaddress" property="mailingaddress"/>
+    <result column="sex" property="sex"/>
+    <result column="leaveDate" property="leaveDate"/>
+    <result column="bornDate" property="bornDate"/>
+    <result column="companyMail" property="companyMail"/>
+    <result column="joblevel" property="joblevel"/>
+    <result column="lastLoginTime" property="lastLoginTime"/>
+    <result column="domainPassword" property="domainPassword"/>
+    <result column="company_name" property="companyName"/>
+    <result column="company_code" property="companyCode"/>
+    <result column="emplid" property="emplid"/>
+    <result column="tempid" property="tempid"/>
+    <result column="app_account" property="appAccount"/>
+    <result column="noticeTodo" property="noticeTodo"/>
+    <result column="computerName" property="computerName"/>
+  </resultMap>
+
+  <select id="getByUserNameAndDomainCode" resultMap="BaseResultMap">
+        SELECT
+            bu.id,bu.activitiSync,bu.browser,bu.password,bu.realName,bu.sourceId,d.sourceCode,bu.signature,bu.status,bu.userkey,
+            bu.userName,bu.departid,bu.delete_flag deleteFlag,bu.PersonnelCode,bu.Supervisor,bu.CreateTime,
+            bu.Updatetime,bu.salt,bu.inDate,
+            u.email,u.mobilePhone,u.diyModel,u.officePhone,u.signatureFile,u.update_name,u.update_date,u.update_by,
+            u.create_name,u.create_date,u.create_by
+        FROM
+            t_s_user u,
+            t_s_base_user bu,
+            t_datasource d,
+            t_domain a,
+            t_domain_datasource b
+        WHERE
+            u.id=bu.id
+            AND bu.sourceId=d.SourceId
+            AND a.domainId=b.domainId
+            AND d.sourceId=b.sourceId
+            AND bu.userName = #{userName}
+            AND a.domainCode = #{domainCode}
+  </select>
+
+  <select id="syncBaseUser" resultType="java.util.HashMap">
+    SELECT a.id,a.`userName`,a.`realName`,a.`PersonnelCode`,a.`password`,a.`salt`,a.`status`,a.`sourceId`,
+    a.emplid,a.app_account,a.`delete_flag`,
+    b.mobilePhone,b.`email`,a.CreateTime,a.Updatetime
+     FROM `t_s_base_user` a,`t_s_user` b WHERE a.`ID`=b.`id`
+    <if test="sucSyncDateTime!=null and sucSyncDateTime!=''">
+      AND (DATE(a.`CreateTime`) >= #{sucSyncDateTime} OR DATE(a.`Updatetime`) >= #{sucSyncDateTime})
+    </if>
+    <if test="startId!=null and startId!=''">
+      AND a.`ID` > #{startId}
+    </if>
+     AND a.sourceId IS NOT NULL ORDER BY a.id ASC LIMIT 20000
+  </select>
+
+  <select id="syncDataSource" resultType="java.util.HashMap">
+    SELECT SourceId,SourceName,SourceCode,Descripetion,Createtime,Updatetime FROM `t_datasource` WHERE SourceCode NOT IN ('DATASOURCE','CESHI')
+  </select>
+
+</mapper>

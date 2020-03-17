@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auc.mapper.PrivilegeMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.auc.dao.Privilege">
+        <id column="id" property="id"/>
+        <result column="pri_name" property="priName"/>
+        <result column="valid" property="valid"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="getRelatedRoleCode" resultType="java.lang.String">
+        SELECT
+            r.role_code
+        FROM
+            auc_re_role r
+        LEFT JOIN auc_re_role_privilege rp ON rp.role_id = r.id
+        WHERE rp.privilege_id = #{privilegeId}
+    </select>
+
+    <select id="selectByRoleId" resultMap="BaseResultMap">
+        SELECT
+            id,pri_name,valid,create_time
+        FROM auc_re_privilege p
+        LEFT JOIN auc_re_role_privilege rp ON rp.privilege_id = p.id
+        WHERE rp.role_id = #{roleId}
+    </select>
+</mapper>

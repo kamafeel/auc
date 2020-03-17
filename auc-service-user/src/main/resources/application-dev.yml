@@ -1,0 +1,32 @@
+spring:
+  redis:
+    #host:
+    #port:
+    password:
+    lettuce:
+      pool:
+        max-active: 250         # 连接池最大连接数（使用负值表示没有限制） 默认 8
+        max-wait: 6000        # 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1ms
+        max-idle: 250           # 连接池中的最大空闲连接 默认 8
+        min-idle: 150           # 连接池中的最小空闲连接 默认 0
+    sentinel:
+      master: ems300
+      nodes: 10.112.68.116:26379,10.112.68.117:26379,10.112.68.118:26379
+    database: 6
+
+dubbo:
+  application:
+    name: user-provider # 服务名
+  registry:
+    #address: zookeeper://10.115.88.106:2181?backup=10.115.88.113:2181,10.115.88.125:2181 # 注册中心地址
+    address: zookeeper://10.112.68.79:2181?backup=10.112.68.102:2181,10.112.68.116:2181  #300的zk
+  protocol:
+    name: dubbo # 指定通信协议
+    port: 20880 # 通信端口  这里指的是与消费者间的通信协议与端口
+  scan:
+    base-packages: com.auc.dubbo.user.service.impl #扫描的包名
+  provider:
+    timeout: 40000 # 配置全局调用服务超时时间，dubbo默认是1s，肯定不够用呀
+    retries: 3 # 重试3次
+    delay: -1
+

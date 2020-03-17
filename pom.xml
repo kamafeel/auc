@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.oa</groupId>
+  <artifactId>auc</artifactId>
+  <version>${project.version}</version>
+  <packaging>pom</packaging>
+  <name>auc</name>
+  <description>统一鉴权平台</description>
+
+  <modules>
+    <module>auc-common</module>
+    <module>auc-domain</module>
+    <module>auc-db</module>
+    <module>auc-dao</module>
+    <module>auc-service</module>
+    <module>auc-dubbo-api</module>
+    <module>auc-service-user</module>
+    <module>auc-web</module>
+  </modules>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <project.version>1.0</project.version>
+    <java.version>1.8</java.version>
+    <version.swagger>2.9.2</version.swagger>
+    <dubbo.version>2.7.3</dubbo.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <dependency>
+        <!-- Import dependency management from Spring Boot -->
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>2.1.9.RELEASE</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- tomcat部署,相关jar不再打包进入war  -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-tomcat</artifactId>
+        <scope>provided</scope>
+      </dependency>
+
+      <!-- Apache Dubbo  -->
+      <dependency>
+        <groupId>org.apache.dubbo</groupId>
+        <artifactId>dubbo-dependencies-bom</artifactId>
+        <version>${dubbo.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>com.oa</groupId>
+        <artifactId>auc-common</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.oa</groupId>
+        <artifactId>auc-domain</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.oa</groupId>
+        <artifactId>auc-dao</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.oa</groupId>
+        <artifactId>auc-service</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <!-- Dubbo Spring Boot Starter -->
+      <dependency>
+        <groupId>org.apache.dubbo</groupId>
+        <artifactId>dubbo-spring-boot-starter</artifactId>
+        <version>${dubbo.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.15</version>
+      </dependency>
+
+      <!--shardingsphere start-->
+      <!-- for spring boot -->
+      <dependency>
+        <groupId>io.shardingsphere</groupId>
+        <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
+        <version>3.1.0</version>
+      </dependency>
+
+      <!--lombok-->
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.18.8</version>
+      </dependency>
+
+      <!-- swagger rest api  构建api接口-->
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger-ui</artifactId>
+        <version>${version.swagger}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger2</artifactId>
+        <version>${version.swagger}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-bean-validators</artifactId>
+        <version>${version.swagger}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjrt</artifactId>
+        <version>1.9.2</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.baomidou</groupId>
+        <artifactId>mybatis-plus-boot-starter</artifactId>
+        <version>3.2.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt</artifactId>
+        <version>0.9.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>24.1-jre</version>
+      </dependency>
+
+      <dependency>
+        <groupId>javax.persistence</groupId>
+        <artifactId>persistence-api</artifactId>
+        <version>1.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.javacrumbs.shedlock</groupId>
+        <artifactId>shedlock-spring</artifactId>
+        <version>3.0.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.javacrumbs.shedlock</groupId>
+        <artifactId>shedlock-provider-redis-spring</artifactId>
+        <version>3.0.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi</artifactId>
+        <version>4.0.1</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml</artifactId>
+        <version>4.0.1</version>
+      </dependency>
+
+      <!--客户端详情信息获取-->
+      <dependency>
+        <groupId>com.blueconic</groupId>
+        <artifactId>browscap-java</artifactId>
+        <version>1.2.13</version>
+      </dependency>
+
+      <!--图片验证码-->
+      <dependency>
+        <groupId>com.github.penggle</groupId>
+        <artifactId>kaptcha</artifactId>
+        <version>2.3.2</version>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
+  <profiles>
+    <!--300开发环境 -->
+    <profile>
+      <id>dev</id>
+      <properties>
+        <activatedProperties>dev</activatedProperties>
+        <logPath>/data/log/dev/auc</logPath>
+        <logLevelConsole>INFO</logLevelConsole>
+        <logLevelAction>INFO</logLevelAction>
+        <logLevelRoot>INFO</logLevelRoot>
+      </properties>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+    <!--500测试环境 -->
+    <profile>
+      <id>qa</id>
+      <properties>
+        <activatedProperties>qa</activatedProperties>
+        <logPath>/data/log/test/auc</logPath>
+        <logLevelConsole>INFO</logLevelConsole>
+        <logLevelAction>INFO</logLevelAction>
+        <logLevelRoot>INFO</logLevelRoot>
+      </properties>
+    </profile>
+    <!--800生产环境 -->
+    <profile>
+      <id>pro</id>
+      <properties>
+        <activatedProperties>pro</activatedProperties>
+        <logPath>/data/log/auc</logPath>
+        <logLevelConsole>INFO</logLevelConsole>
+        <logLevelAction>INFO</logLevelAction>
+        <logLevelRoot>INFO</logLevelRoot>
+      </properties>
+    </profile>
+  </profiles>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.properties</include>
+          <include>**/*.xml</include>
+          <include>**/*.yml</include>
+          <include>**/*.tld</include>
+          <include>**/*.vm</include>
+          <include>**/*.lua</include>
+          <include>**/*.so</include>
+        </includes>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+
+
+      <!--生产环境使用tomcat运行
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <encoding>${project.build.sourceEncoding}</encoding>
+        </configuration>
+      </plugin>
+      -->
+    </plugins>
+  </build>
+
+</project>

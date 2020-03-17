@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auc.mapper.AccountConvertMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.auc.dao.AccountConvert">
+        <id column="id" property="id" />
+        <result column="client_id" property="clientId" />
+        <result column="source_code" property="sourceCode" />
+        <result column="convert_login_name" property="convertLoginName" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="create_user" property="createUser" />
+        <result column="update_user" property="updateUser" />
+    </resultMap>
+
+
+  <insert id="insertList" >
+    insert into auc_re_account_convert (id,client_id,source_code, convert_login_name,
+    create_time, create_user)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id},#{item.clientId,jdbcType=VARCHAR},#{item.sourceCode,jdbcType=VARCHAR}, #{item.convertLoginName,jdbcType=VARCHAR},
+      NOW(),#{item.createUser,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+</mapper>

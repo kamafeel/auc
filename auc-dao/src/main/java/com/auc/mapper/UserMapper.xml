@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auc.mapper.UserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.auc.dao.User">
+        <id column="id" property="id" />
+        <result column="user_name" property="userName" />
+        <result column="real_name" property="realName" />
+        <result column="source_id" property="sourceId" />
+        <result column="source_code" property="sourceCode" />
+        <result column="source_name" property="sourceName" />
+        <result column="personnel_code" property="personnelCode" />
+        <result column="mobile_phone" property="mobilePhone" />
+        <result column="email" property="email" />
+        <result column="status" property="status" />
+        <result column="delete_flag" property="deleteFlag" />
+        <result column="password" property="password" />
+        <result column="salt" property="salt" />
+        <result column="ps_id" property="psId" />
+        <result column="app_account" property="appAccount" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+  <delete id="deleteUserBySync">
+    DELETE auc_re_user FROM auc_re_user,auc_ru_user_sync WHERE auc_re_user.id=auc_ru_user_sync.id
+  </delete>
+
+  <insert id="batchInsertUserSync">
+    insert into auc_ru_user_sync
+    (id,user_name,real_name,source_id,personnel_code,status,delete_flag,password,salt,mobile_phone,email,ps_id,app_account,
+    create_time,update_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id},#{item.userName},#{item.realName},#{item.sourceId},#{item.PersonnelCode},#{item.status},#{item.delete_flag},#{item.password},#{item.salt},
+      #{item.mobilePhone},#{item.email},#{item.emplid},#{item.app_account},#{item.CreateTime},#{item.Updatetime})
+    </foreach>
+  </insert>
+
+  <insert id="syncUser">
+    INSERT INTO auc_re_user SELECT * FROM auc_ru_user_sync
+  </insert>
+
+  <delete id="deleteUserSync">
+    DELETE FROM auc_ru_user_sync
+  </delete>
+
+  <delete id="backupAUCUser">
+    INSERT auc_ru_user_backup (id,status,password,salt)
+    SELECT u.id,u.status,u.password,u.salt FROM auc_re_user u,auc_ru_user_sync us WHERE u.id=us.id
+  </delete>
+
+  <delete id="deleteAUCUserBackup">
+    DELETE FROM auc_ru_user_backup
+  </delete>
+
+  <select id="selectPageVo" resultMap="BaseResultMap">
+    SELECT
+    u.`id`,
+    u.`user_name`,
+    u.`real_name`,
+    u.`source_id`,
+    d.`source_name`,
+    u.`personnel_code`,
+    u.`mobile_phone`,
+    u.`email`,
+    u.`status`,
+    u.`delete_flag`,
+    u.`ps_id`,
+    u.`app_account`,
+    u.`create_time`,
+    u.`update_time`
+    FROM
+    (
+      SELECT * FROM `auc_re_user`
+      <where>
+        ${ew.sqlSegment}
+      </where>
+    )u
+    LEFT JOIN
+    `auc_re_datasource` d
+    ON u.`source_id`=d.`source_id`
+    ORDER BY u.create_time DESC
+  </select>
+
+    <delete id="deleteRoleRelation">
+        DELETE FROM auc_re_user_roles_relation WHERE user_id = #{userId} AND role_id = #{roleId}
+    </delete>
+
+    <insert id="saveRoleRelation">
+        INSERT INTO auc_re_user_roles_relation
+            (user_id, user_name, role_id)
+        VALUES
+            (#{userId}, #{userName}, #{roleId})
+    </insert>
+
+  <select id="getByUserNameAndDomainCode" resultMap="BaseResultMap">
+    SELECT u.*,ds.`source_code`
+        FROM
+            `auc_re_user` u,
+            `auc_re_datasource` ds,
+            `auc_re_domain` d,
+            `auc_re_domain_datasource` dd
+        WHERE
+             u.`status`=1
+            AND u.source_id=ds.source_id
+            AND d.domain_id=dd.domain_id
+            AND ds.source_id=dd.source_id
+            AND u.user_name = #{userName}
+            AND d.domain_code = #{domainCode}
+  </select>
+
+  <select id="getByUsernameAndSourceCode" resultMap="BaseResultMap">
+    SELECT u.*,ds.`source_code`
+        FROM
+            `auc_re_user` u,
+            `auc_re_datasource` ds
+        WHERE
+	          u.`status`=1
+	          AND u.source_id=ds.source_id
+            AND u.user_name = #{userName}
+            AND ds.source_code = #{sourceCode}
+  </select>
+
+  <select id="getByMobilePhoneAndSourceCode" resultMap="BaseResultMap">
+    SELECT u.*,ds.`source_code`
+        FROM
+            `auc_re_user` u,
+            `auc_re_datasource` ds
+        WHERE
+	          u.`status`=1
+	          AND u.source_id=ds.source_id
+            AND u.mobile_phone = #{mobilePhone}
+            AND ds.source_code = #{sourceCode}
+  </select>
+
+  <select id="getDataSourceByMobilePhone" resultType="java.util.Map">
+    SELECT source_code as sourceCode, source_name as sourceName FROM auc_re_datasource
+      WHERE source_id IN (
+      SELECT u.source_id FROM `auc_re_user` u WHERE u.mobile_phone = #{mobilePhone} and u.status = 1)
+  </select>
+
+  <select id="getDataSourceByAppAccount" resultType="java.util.Map">
+    SELECT source_code as sourceCode, source_name as sourceName FROM auc_re_datasource
+      WHERE source_id IN (
+      SELECT u.source_id FROM `auc_re_user` u WHERE u.app_account = #{appAccount} and u.status = 1)
+  </select>
+
+    <select id="getUsersByUids" resultMap="BaseResultMap">
+    SELECT u.*,ds.`source_code`,ds.`source_name`
+        FROM
+            `auc_re_user` u,
+            `auc_re_datasource` ds
+        WHERE
+	          u.`status`=1
+	          AND u.source_id=ds.source_id
+            AND u.id in
+        <foreach collection="userIds" item="userId" index="index" separator="," open="(" close=")">
+           #{userId}
+        </foreach>
+  </select>
+</mapper>

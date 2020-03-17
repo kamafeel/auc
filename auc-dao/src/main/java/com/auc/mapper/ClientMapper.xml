@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auc.mapper.ClientMapper">
+
+  <!-- 通用查询映射结果 -->
+  <resultMap id="BaseResultMap" type="com.auc.dao.Client">
+    <id column="id" property="id"/>
+    <result column="client_id" property="clientId"/>
+    <result column="client_name" property="clientName"/>
+    <result column="client_icon" property="clientIcon"/>
+    <result column="client_login_url" property="clientLoginUrl"/>
+    <result column="client_secret" property="clientSecret"/>
+    <result column="authorized_types" property="authorizedTypes"/>
+    <result column="web_server_redirect_uri" property="webServerRedirectUri"/>
+    <result column="client_jwt_secret" property="clientJwtSecret"/>
+    <result column="status" property="status"/>
+    <result column="del_flag" property="delFlag"/>
+    <result column="sort" property="sort"/>
+    <result column="remarks" property="remarks"/>
+    <result column="login_type" property="loginType"/>
+    <result column="custom_login" property="customLogin"/>
+    <result column="custom_login_info" property="customLoginInfo"/>
+  </resultMap>
+
+  <!-- 获取用户角色信息 -->
+  <select id="getClientsByName" parameterType="java.lang.String"
+    resultMap="BaseResultMap">
+		SELECT
+      u.id,
+      u.client_id,
+      u.client_name,
+      u.client_icon,
+      u.remarks
+    FROM
+      `auc_re_client` u
+    WHERE
+        u.status = 0 AND u.del_flag = 0
+    <if test="keyword!=null and keyword!=''">
+       AND u.client_name like concat('%',#{keyword},'%') or remarks like concat('%',#{keyword},'%')
+    </if>
+    ORDER BY sort
+	</select>
+
+</mapper>

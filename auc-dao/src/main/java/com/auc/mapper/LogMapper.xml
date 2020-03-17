@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auc.mapper.LogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.auc.dao.Log">
+        <id column="id" property="id" />
+        <result column="log_type" property="logType" />
+        <result column="spend_time" property="spendTime" />
+        <result column="device" property="device" />
+        <result column="ip" property="ip" />
+        <result column="content" property="content" />
+        <result column="user_name" property="userName" />
+        <result column="user_id" property="userId" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+  <insert id="toHis" parameterType="java.lang.Integer">
+    INSERT INTO auc_hi_log (
+      log_type,
+      spend_time,
+      device,
+      ip,
+      user_name,
+      user_id,
+      content,
+      create_time
+    )
+    SELECT
+      log_type,
+      spend_time,
+      device,
+      ip,
+      user_name,
+      user_id,
+      content,
+      create_time
+    FROM
+      auc_ru_log
+    WHERE DATE(create_time) = DATE_SUB(CURDATE(),INTERVAL #{beforeDayNum} DAY)
+  </insert>
+
+  <delete id="del2HisData" parameterType="java.lang.Integer">
+    DELETE FROM auc_ru_log WHERE DATE(create_time) = DATE_SUB(CURDATE(),INTERVAL #{beforeDayNum} DAY)
+  </delete>
+
+</mapper>

@@ -1,0 +1,27 @@
+#存在环境区别的变量,勿放此处
+spring:
+  profiles:
+    active: @activatedProperties@   # pom.xml里面的activatedProperties配置
+  main:
+    allow-bean-definition-overriding: true
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+    default-property-inclusion: ALWAYS
+server:
+  port: 8089
+
+mybatis:
+  mapper-locations: classpath:com/auc/dubbo/user/mapper/*.xml
+
+# 打印sql
+logging:
+  level:
+    com.auc.dubbo.user.mapper: DEBUG
+
+cache:
+  ttl:
+    default: 60 #勿使用
+    depart: 3600
+    user: 600
+    dataSource: 3600

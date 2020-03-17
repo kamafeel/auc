@@ -1,0 +1,63 @@
+#存在环境区别的变量,勿放此处
+spring:
+  profiles:
+     active: @activatedProperties@   # pom.xml里面的activatedProperties配置
+  main:
+    allow-bean-definition-overriding: true
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+    default-property-inclusion: ALWAYS
+  http:
+    encoding:
+      charset: UTF-8
+      force: true
+  servlet:
+    multipart:
+      enabled: true
+      # 上传一个文件最大值,默认1Mb
+      max-file-size: 64MB
+      # 上传多个文件最大值,默认10Mb
+      max-request-size: 256MB
+
+jwt:
+  expireMinutes:
+    authToken: 300
+    refreshToken: 360
+
+message:
+  sms:
+    address: http://10.0.4.30:8082 # 短信发送地址用户名密码
+    userId: FKXTZD
+    password: 19070209
+    code:
+      loginExpireMinutes: 1
+      resetExpireMinutes: 10
+
+service:
+  version:
+    user: 1.0.0
+
+mybatis-plus:
+  mapper-locations: ["classpath*:com/auc/mapper/*.xml"]
+
+# 打印sql
+logging:
+  level:
+    com.auc.mapper: DEBUG
+
+login:
+  pw:
+    error:
+      maxnum: 5
+      interval: 60
+
+cache:
+  ttl:
+    default: 60 #勿使用
+    client: 3600
+    user: 600
+    role: 600
+    dataSource: 3600
+
+
