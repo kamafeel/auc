@@ -269,7 +269,7 @@ public class LoginServiceImpl implements LoginService {
       if(e.getRootCause() instanceof java.net.SocketTimeoutException){
         throw new AppException(ErrorCodeEnum.DOMAIN_SERVER_ERROR);
       }
-      boolean isExpired = userService.isExpiredOfPassword(env.get(Context.SECURITY_PRINCIPAL),
+      boolean isExpired = userService.isExpiredOfPassword(dto.getUserName(),
           domainCode.equals("gomedq") ? "gome" : "gis");
       if(isExpired){
         throw new AppException(ErrorCodeEnum.UNEXCEPTED, "域密码过期");

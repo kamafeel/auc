@@ -33,7 +33,7 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
   @Override
   @Cacheable("clientCache")
   public Client getByClientId(String clientId) {
-    return baseMapper.selectOne(Wrappers.<Client>lambdaQuery().eq(Client::getClientId, clientId));
+    return baseMapper.selectOne(Wrappers.<Client>lambdaQuery().eq(Client::getClientId, clientId).eq(Client::getDelFlag, 0));
   }
 
   @Override
