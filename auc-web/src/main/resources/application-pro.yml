@@ -39,7 +39,7 @@ domain:
       read: 4000
       connect: 3000
   isExpired:
-    url: http://10.128.16.50:8012/ADService.asmx
+    url: http://10.128.16.54/ApiService/ADService.asmx
 
 dubbo:
   application:

@@ -1,6 +1,7 @@
 package com.auc.service.impl;
 
 import com.auc.common.AppException;
+import com.auc.common.enums.DataSourceEnum;
 import com.auc.common.enums.ErrorCodeEnum;
 import com.auc.common.utils.ExcelOperate;
 import com.auc.dao.AccountConvert;
@@ -8,18 +9,21 @@ import com.auc.dubbo.user.dao.MergeUser;
 import com.auc.mapper.AccountConvertMapper;
 import com.auc.service.IAccountConvertService;
 import com.auc.service.ICacheService;
-import com.auc.service.IUserService;
+import com.auc.service.IClientService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Lists;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,26 +41,43 @@ public class AccountConvertServiceImpl extends ServiceImpl<AccountConvertMapper,
     IAccountConvertService {
   @Autowired
   private ICacheService iCacheService;
+  @Resource
+  private IClientService IClientService;
 
   @Override
   public List<String> importExcel(MultipartFile file, String userId){
     List<String> resultList = Lists.newArrayList();
     // 获取excel中的数据
     try {
+      List<String> cs = IClientService.getAllClient().stream().map(c->c.getClientId()).distinct().collect(Collectors.toList());
       List<String[]>  result = ExcelOperate.getData(file, 1);
       List<AccountConvert> acList = new ArrayList<>();
+      AtomicInteger num = new AtomicInteger(2);
       result.forEach(sa->{
         AccountConvert ac = new AccountConvert();
+        if(!EnumUtils.isValidEnum(DataSourceEnum.class, sa[0])){
+          throw new AppException(ErrorCodeEnum.FAIL_FILE,"第"+num.get()+"行,数据源字段不正确");
+        }
+        if(!cs.contains(sa[2])){
+          throw new AppException(ErrorCodeEnum.FAIL_FILE,"第"+num.get()+"行,访问系统字段不正确");
+        }
         ac.setSourceCode(sa[0]);
         ac.setConvertLoginName(sa[1]);
         ac.setClientId(sa[2]);
         ac.setCreateUser(userId);
         acList.add(ac);
+        num.getAndIncrement();
       });
       baseMapper.insertList(acList);
-    } catch (IOException e) {
+    } catch (Exception e) {
       log.error("importExcel is fail",e);
-      throw new AppException(ErrorCodeEnum.FAIL_FILE,ExceptionUtils.getStackTrace(e));
+      if(e instanceof AppException ){
+        resultList.add(e.getMessage());
+      }else if(e instanceof DuplicateKeyException){
+        resultList.add("添加的记录已经存在");
+      }else{
+        throw new AppException(ErrorCodeEnum.FAIL_FILE,ExceptionUtils.getStackTrace(e));
+      }
     }
     return resultList;
   }

@@ -44,6 +44,14 @@ public class RedisServiceImpl implements RedisService {
   @Resource
   RedisScript cuckooFilterCreateLua;
 
+  @Qualifier("layerBloomFilterCheckCreateLua")
+  @Resource
+  RedisScript<Boolean> layerBloomFilterCheckCreateLua;
+
+  @Qualifier("layerBloomFilterAddCreateLua")
+  @Resource
+  RedisScript<Long> layerBloomFilterAddCreateLua;
+
   private <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
     if (o == null) {
       return null;
@@ -171,6 +179,18 @@ public class RedisServiceImpl implements RedisService {
       return true;
     }
     return false;
+  }
+
+  @Override
+  public int addBloomFilter(String blName,long count, double positives,String addStr) {
+    Number number = stringSerializableRedisTemplate.execute(layerBloomFilterAddCreateLua, Collections.singletonList("auc:".concat(blName)), count, positives,addStr);
+    return number != null? number.intValue() : -1;
+  }
+
+  @Override
+  public boolean checkBloomFilter(String blName, long count, double positives,String addStr) {
+    Boolean b = stringSerializableRedisTemplate.execute(layerBloomFilterCheckCreateLua, Collections.singletonList("auc:".concat(blName)), count, positives,addStr);
+    return b;
   }
 
   @Override

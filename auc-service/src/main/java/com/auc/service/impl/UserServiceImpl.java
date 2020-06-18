@@ -298,13 +298,18 @@ private LoginService loginService;
               // 设置参数，此处自动添加方法的前缀：web
               .setParam("adSource", adSource)
               .setParam("adAccount", adAccount)
-              .setParam("adPassword", adNewPassword);
+              .setParam("adPassword", adNewPassword)
+              .setConnectionTimeout(3000)
+              .setReadTimeout(8000);
 
       // 发送请求，参数true表示返回一个格式化后的XML内容
       // 返回内容为XML字符串，可以配合XmlUtil解析这个响应
       String s =client.send(true);
       Document resdoc = XmlUtil.parseXml (s);
-      res= (Boolean) XmlUtil.getByXPath("//SetAdUserPasswordResponse/SetAdUserPasswordResult", resdoc, XPathConstants.BOOLEAN);
+      //res= (Boolean) XmlUtil.getByXPath("//SetAdUserPasswordResponse/SetAdUserPasswordResult", resdoc, XPathConstants.BOOLEAN);
+      String resStr = Optional.ofNullable(XmlUtil.getByXPath("//SetAdUserPasswordResponse/SetAdUserPasswordResult", resdoc, XPathConstants.STRING))
+          .orElse("false").toString();
+      res= Boolean.parseBoolean(resStr);
     }catch (Exception e){
       res = false;
     }
@@ -488,13 +493,17 @@ private void comparePassword(User user,String newpassword ) throws AppException{
           .setMethod("tem:CheckAdUserPasswordExpired", "http://tempuri.org/")
           // 设置参数，此处自动添加方法的前缀：web
           .setParam("adSource", adSource)
-          .setParam("adAccount", adAccount);
+          .setParam("adAccount", adAccount)
+          .setConnectionTimeout(3000)
+          .setReadTimeout(3000);
 
       // 发送请求，参数true表示返回一个格式化后的XML内容
       // 返回内容为XML字符串，可以配合XmlUtil解析这个响应
       String s =client.send(true);
       Document resdoc = XmlUtil.parseXml (s);
-      res= (Boolean) XmlUtil.getByXPath("/CheckAdUserPasswordExpiredResponse/CheckAdUserPasswordExpiredResult", resdoc, XPathConstants.BOOLEAN);
+      String resStr = Optional.ofNullable(XmlUtil.getByXPath("//CheckAdUserPasswordExpiredResponse/CheckAdUserPasswordExpiredResult", resdoc, XPathConstants.STRING))
+          .orElse("false").toString();
+      res= Boolean.parseBoolean(resStr);
     }catch (Exception e){
       res = false;
     }

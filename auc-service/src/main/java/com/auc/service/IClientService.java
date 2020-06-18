@@ -15,6 +15,9 @@ import java.util.List;
 public interface IClientService extends IService<Client> {
   void clearCache();
   Client getByClientId(String clientId);
+
+  List<Client> getAllClient();
+
   List<Client> getClientsByName(String keyword);
 
 }

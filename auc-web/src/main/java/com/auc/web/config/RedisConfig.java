@@ -185,6 +185,22 @@ public class RedisConfig extends CachingConfigurerSupport {
     return redisScript;
   }
 
+  @Bean("layerBloomFilterAddCreateLua")
+  public DefaultRedisScript<Number> layerBloomFilterAddCreate() {
+    DefaultRedisScript redisScript = new DefaultRedisScript();
+    redisScript.setLocation(new ClassPathResource("lua/bloom-filter/layer-add.lua"));
+    redisScript.setResultType(java.lang.Number.class);
+    return redisScript;
+  }
+
+  @Bean("layerBloomFilterCheckCreateLua")
+  public DefaultRedisScript<Boolean> layerBloomFilterCheckCreate() {
+    DefaultRedisScript redisScript = new DefaultRedisScript();
+    redisScript.setLocation(new ClassPathResource("lua/bloom-filter/layer-check.lua"));
+    redisScript.setResultType(java.lang.Boolean.class);
+    return redisScript;
+  }
+
   @Bean
   public RedisLockRegistry redisLockRegistry(LettuceConnectionFactory redisConnectionFactory) {
     return new RedisLockRegistry(redisConnectionFactory, "auc-lock");

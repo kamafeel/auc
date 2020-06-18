@@ -41,6 +41,10 @@ public interface RedisService {
 
   boolean pwErrorLimitLua(RedisKey key, String keySuffix, int count, int time);
 
+  int addBloomFilter(String blName, long count, double positives, String addStr);
+
+  boolean checkBloomFilter(String blName, long count, double positives, String addStr);
+
   void cuckooFilterCreate(String cuckooName, String cuckooSize);
 
   /**

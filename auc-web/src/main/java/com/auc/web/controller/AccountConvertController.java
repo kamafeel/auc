@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import java.util.stream.Collectors;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -103,7 +104,8 @@ public class AccountConvertController {
                 .likeRight(!StringUtils.isEmpty(dto.getConvertLoginName()),AccountConvert::getConvertLoginName, dto.getConvertLoginName())
                 .orderByDesc(AccountConvert::getCreateTime,AccountConvert::getUpdateTime));
     accountConvertIPage.getRecords().stream().forEach(accountconver -> {
-      accountconver.setClientName(clientService.getByClientId(accountconver.getClientId()).getClientName());//TODO 是否影响效率
+      Client client = clientService.getByClientId(accountconver.getClientId());
+      accountconver.setClientName(client == null?"":client.getClientName());//TODO 是否影响效率
       String sourceCode = accountconver.getSourceCode();
       accountconver.setSourceName(StringUtils.isEmpty(sourceCode) ? "" : DataSourceEnum.valueOf(sourceCode).getSourceName());
     });
@@ -116,7 +118,9 @@ public class AccountConvertController {
   @ResponseBody
   public Result importExcel(@ApiParam(value = "文件") MultipartFile file) {
     List<String> result  = accountConvertService.importExcel(file,ContextUtil.getCurrentUserId());
-    return result.isEmpty() ? Result.success() : Result.failed(ErrorCodeEnum.FAIL_FILE,"",result);
+    return result.isEmpty() ? Result.success() : Result.failed(ErrorCodeEnum.FAIL_FILE,
+        result.stream().map(String::valueOf)
+        .collect(Collectors.joining("/r/n")),null);
   }
 
 }

@@ -2,6 +2,7 @@ package com.auc.web.controller;
 
 import com.auc.common.AppException;
 import com.auc.common.enums.ErrorCodeEnum;
+import com.auc.dao.AccountConvert;
 import com.auc.domain.dto.requestdto.ClientQueryRequestDTO;
 import com.auc.domain.dto.requestdto.QueryPageParam;
 import com.auc.dubbo.user.dao.MergeUser;
@@ -64,7 +65,18 @@ public class ClientController {
   @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
   @ResponseBody
   public Result<Boolean> delete(@PathVariable("id") Integer id) {
-    Client c = new Client();
+    if (id == null) {
+      return Result.failed(ErrorCodeEnum.UNEXCEPTED, "ID不能为空", false);
+    }
+    Client c = clientService.getById(id);
+    if (c == null) {
+      return Result.failed(ErrorCodeEnum.UNEXCEPTED, "传入ID有误", false);
+    }
+    // 先验证账号转换表是否有该client的配置信息，如果有则不删除client
+    int accountNum = accountConvertService.count(Wrappers.<AccountConvert>lambdaQuery().eq(AccountConvert::getClientId, c.getClientId()));
+    if (accountNum > 0) {
+      return Result.failed(ErrorCodeEnum.UNEXCEPTED, "请先删除相关的账号转换信息", false);
+    }
     c.setId(id);
     c.setDelFlag(1);
     clientService.updateById(c);
@@ -97,7 +109,7 @@ public class ClientController {
   @ResponseBody
   public Result<List<Client>> domainLoginList() {
     return Result.success(clientService.list(Wrappers.<Client>lambdaQuery()
-        .eq(Client::getStatus, 0)  // 状态为正常
+        //.eq(Client::getStatus, 0)  // 状态为显示
         .eq(Client::getDelFlag, 0) // 没有被删除
         .eq(Client::getLoginType,1) // 采用域登录
         .last(" ORDER BY sort ") // 使用用配置的顺序

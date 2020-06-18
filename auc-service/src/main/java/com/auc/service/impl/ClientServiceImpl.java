@@ -37,6 +37,11 @@ public class ClientServiceImpl extends ServiceImpl<ClientMapper, Client> impleme
   }
 
   @Override
+  public List<Client> getAllClient() {
+    return baseMapper.selectList(Wrappers.<Client>lambdaQuery().eq(Client::getDelFlag, 0));
+  }
+
+  @Override
   @Cacheable("clientCache")
   public List<Client> getClientsByName(String keyword) {
     return baseMapper.getClientsByName(keyword);
