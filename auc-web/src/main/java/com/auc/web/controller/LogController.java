@@ -72,7 +72,7 @@ public class LogController {
     }
 
     List<Log> logs = logService.list(Wrappers.<Log>lambdaQuery()
-        .lt(dto.getId()!=null,  Log::getId, dto.getId())
+        .lt(dto.getId()!=null,  Log::getId, dto.getId()).in(Log::getUserId,dto.getUserId())
         .in(dto.getUserId()!=null && !dto.getUserId().isEmpty(),Log::getUserId,dto.getUserId())
         .between(dto.getStartTime() != null, Log::getCreateTime, dto.getStartTime(),
             dto.getEndTime())
